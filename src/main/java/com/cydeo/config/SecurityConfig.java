@@ -45,7 +45,12 @@ public class SecurityConfig {
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .httpBasic()        //pop-box need to be change to our login page
+               // .httpBasic()        //pop-box need to be change to our login page
+                .formLogin()
+                    .loginPage("/login")//change to our login page
+                    .defaultSuccessUrl("/welcome")
+                    .failureUrl("/login?error=true")
+                    .permitAll()
                 .and().build();
 
 
