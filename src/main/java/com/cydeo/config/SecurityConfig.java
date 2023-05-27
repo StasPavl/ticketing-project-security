@@ -20,10 +20,13 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
     private final SecurityService securityService;
+    private final AuthSuccessHandler authSuccessHandler;
 
-    public SecurityConfig(SecurityService securityService) {
+    public SecurityConfig(SecurityService securityService, AuthSuccessHandler authSuccessHandler) {
         this.securityService = securityService;
+        this.authSuccessHandler = authSuccessHandler;
     }
+
     //    @Bean
 //    public UserDetailsService userDetailsService(PasswordEncoder encoder){
 //
@@ -41,9 +44,9 @@ public class SecurityConfig {
                 .authorizeRequests()
 //                .antMatchers("/user/**").hasRole("ADMIN") in DB should be then ROLE_ADMIN
                 .antMatchers("/user/**").hasAuthority("Admin")
-                .antMatchers("/project/**").hasRole("Manager")
-                .antMatchers("/task/employee/**").hasRole("Employee")
-                .antMatchers("/task/**").hasRole("Manager")
+                .antMatchers("/project/**").hasAuthority("Manager")
+                .antMatchers("/task/employee/**").hasAuthority("Employee")
+                .antMatchers("/task/**").hasAuthority("Manager")
 //                .antMatchers("/task/**").hasAnyAuthority("Manager", "Admin") to give access to ,any roles!!!
                 .antMatchers("/",
                         "/login",
@@ -56,7 +59,8 @@ public class SecurityConfig {
                // .httpBasic()        //pop-box need to be change to our login page
                 .formLogin()
                     .loginPage("/login")//change to our login page
-                    .defaultSuccessUrl("/welcome")
+//                    .defaultSuccessUrl("/welcome")
+                .successHandler(authSuccessHandler)
                     .failureUrl("/login?error=true")
                     .permitAll()
                 .and()
